@@ -1,0 +1,27 @@
+FROM node:16
+ARG USER_ID=sonid
+
+RUN groupadd -r author && useradd -r -g author $USER_ID
+USER root
+
+RUN mkdir /home/$USER_ID/
+RUN mkdir /home/$USER_ID/.npm-global
+ENV PATH=/home/$USER_ID/.npm-global/bin:$PATH
+ENV NPM_CONFIG_PREFIX=/home/$USER_ID/.npm-global
+RUN mkdir /home/sonid/app/
+
+COPY --chown=$USER_ID . .
+COPY ./api/package.json /home/sonid/app
+COPY ./api/tsconfig.json /home/sonid/app
+
+RUN npm install yarn --global
+WORKDIR /home/sonid/app
+
+
+RUN npm cache clean --force
+RUN yarn
+
+EXPOSE 3000
+ENV PORT 3000
+
+CMD ["yarn", "test"]
