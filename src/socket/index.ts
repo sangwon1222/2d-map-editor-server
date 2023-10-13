@@ -72,6 +72,12 @@ export class Socket{
         socket.emit('add-chat',{ nickname,chat,time })
         socket.broadcast.emit("add-chat", {nickname,chat,time});
       });
+
+      socket.on("update-map-json", async ({mapJson}) => {
+        socket.broadcast.emit("update-map-json", {
+          mapJson: mapJson,
+        });
+      });
     
       socket.on("leave-user", async () => {
         const users = await userInfo()
